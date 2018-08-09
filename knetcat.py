@@ -73,31 +73,29 @@ def clientrun(host, port):
         s.connect((host, port))
         #rt = threading.Thread(target=recv_thread, args=(s,)).start()
         while True:
+            d = select.select([s], [], [], 2)
+            if d[0]:
+                while True:
+                    data = s.recv(recv_size)
+                    if not data: break
+			
+                    sys.stdout.write(data)
             buf = sys.stdin.readline()
             if buf != "":
                 s.send(buf)
-            while True:
-                data = s.recv(recv_size)
-                if not data: break
-			
-                sys.stdout.write(data)
         s.close()
 
-def main(server=False):
-    if server == True:
-        serverrun(host, port)
-    elif server == False:
-        clientrun(host, port)
+signal.signal(signal.SIGINT, signal_handler)
 
 argv = sys.argv[1:]
 if len(argv) == 3:
-    server = True
     host = sys.argv[2]
     port = int(sys.argv[3])
+    serverrun(host, port)
 elif len(argv) == 2:
-    server = False
     host = sys.argv[1]
     port = int(sys.argv[2])
+    clientrun(host, port)
 else:
     usage()
     exit(0)
@@ -105,7 +103,3 @@ else:
 if '-h' in sys.argv[1:]:
     usage()
     exit(0)
-	
-signal.signal(signal.SIGINT, signal_handler)
-
-main(server)

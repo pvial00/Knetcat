@@ -6,6 +6,15 @@ Simple Netcat in Python
 
 # Usage:
 
-Server mode usage: knetcat -l "ip address" "port"
+Server mode usage: python knetcat.py -l "ip address" "port"
 
-Client mode usage: knetcat "ip address" "port"
+Client mode usage: python knetcat.py "ip address" "port"
+
+
+File on STDIN server: cat filename | python knetcat.py -l "ip address" "port"
+
+File on STDIN server: python knetcat.py -l "ip address" "port" < filename
+
+File on STDIN client: cat filename | python knetcat.py "ip address" "port"
+
+File on STDIN client: python knetcat.py "ip address" "port" < filename
