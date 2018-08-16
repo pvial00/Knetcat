@@ -7,7 +7,7 @@ import select, signal
 server = False
 port = 6969
 host = "0.0.0.0"
-recv_size = 8192
+recv_size = 65536
 #stoprequest = threading.Event()
 rt = ""
 
@@ -52,8 +52,8 @@ def clientrun(host, port):
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s = socket.socket()
         s.connect((host, port))
-        for line in sys.stdin.readlines():
-            s.send(line)
+        data = sys.stdin.read()
+        s.send(data)
         s.shutdown(1)
         s.close()
     elif not sys.stdout.isatty():
