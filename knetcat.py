@@ -27,8 +27,8 @@ def serverrun(host, port):
     s.listen(5)
     if select.select([sys.stdin,],[],[],0.0)[0]:
         c, addr = s.accept()
-        for line in sys.stdin.readlines():
-            c.send(line)
+        data = sys.stdin.read()
+        c.send(data)
     else:
         c, addr = s.accept()
         while True:
