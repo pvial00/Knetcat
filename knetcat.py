@@ -32,9 +32,11 @@ def serverrun(host, port):
     else:
         c, addr = s.accept()
         while True:
-            data = c.recv(recv_size)
-            if not data: break
-            sys.stdout.write(data)
+            r, w, e =  select.select([c],[c],[c],0)
+            if r:
+                data = c.recv(recv_size)
+                if not data: break
+                sys.stdout.write(data)
     try:
         c.shutdown(1)
     except socket.error as ser:
@@ -73,15 +75,15 @@ def clientrun(host, port):
         s.connect((host, port))
         #rt = threading.Thread(target=recv_thread, args=(s,)).start()
         while True:
-            d = select.select([s], [], [], 2)
-            if d[0]:
+            r, w, e = select.select([s], [s], [s], 2)
+            if r:
                 while True:
                     data = s.recv(recv_size)
                     if not data: break
 			
                     sys.stdout.write(data)
             buf = sys.stdin.readline()
-            if buf != "":
+            if buf != "" and w:
                 s.send(buf)
         s.close()
 
